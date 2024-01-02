@@ -8,9 +8,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Feeds.Models;
+using Feeds.Utilities;
 using Humanizer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Feeds.Areas.Identity.Pages.Account.Manage
@@ -19,13 +21,16 @@ namespace Feeds.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
         public IndexModel(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            IWebHostEnvironment webHostEnvironment)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         /// <summary>
@@ -62,8 +67,12 @@ namespace Feeds.Areas.Identity.Pages.Account.Manage
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
 
+            // Add customer application user
             [Display(Name = "First Name")] public string FirstName { get; set; }
             [Display(Name = "Last Name")] public string LastName { get; set; }
+
+            [Display(Name = "Profile Picture")]
+            public string ProfilePictureUrl { get; set; }
         }
 
         private async Task LoadAsync(ApplicationUser user)
@@ -76,12 +85,14 @@ namespace Feeds.Areas.Identity.Pages.Account.Manage
             // Add custom application user properties
             var firstName = user.FirstName;
             var lastName = user.LastName;
+            var profilePicture = user.ProfilePictureUrl;
 
             Input = new InputModel
             {
                 PhoneNumber = phoneNumber,
                 FirstName = firstName,
-                LastName = lastName
+                LastName = lastName,
+                ProfilePictureUrl = profilePicture
             };
         }
 
@@ -121,6 +132,7 @@ namespace Feeds.Areas.Identity.Pages.Account.Manage
                     return RedirectToPage();
                 }
             }
+
             // Add custom application user properties 
             var firstName = user.FirstName;
             if (Input.FirstName != firstName)
@@ -136,6 +148,23 @@ namespace Feeds.Areas.Identity.Pages.Account.Manage
                 user.LastName = Input.LastName;
                 await _userManager.UpdateAsync(user);
             }
+
+
+            FileManagementUtility fileManagementUtility = new FileManagementUtility(_webHostEnvironment);
+            IFormFile file = Request.Form.Files.FirstOrDefault();
+            // When an update process occurs the delete should be only when there is new file upload in the form
+            if (!string.IsNullOrEmpty(user.ProfilePictureUrl) && Request.Form.Files.FirstOrDefault() != null)
+            {
+                fileManagementUtility.RemoveFile(file, user.ProfilePictureUrl);
+            }
+            var targetPath = @"images/users";
+            Input.ProfilePictureUrl = fileManagementUtility.UploadFile(file, targetPath);
+            user.ProfilePictureUrl = Input.ProfilePictureUrl;
+            if (!string.IsNullOrEmpty(user.ProfilePictureUrl))
+            {
+                await _userManager.UpdateAsync(user);
+            }
+
 
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";

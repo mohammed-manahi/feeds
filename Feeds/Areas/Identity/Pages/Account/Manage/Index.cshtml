@@ -7,9 +7,10 @@
 
 <h3>@ViewData["Title"]</h3>
 <partial name="_StatusMessage" for="StatusMessage"/>
-<div class="row">
-    <div class="col-md-6">
-        <form id="profile-form" method="post">
+
+<form id="profile-form" method="post" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-md-4">
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <div class="form-floating mb-3">
                 <input asp-for="Username" class="form-control" placeholder="Please choose your username." disabled/>
@@ -30,10 +31,17 @@
                 <label asp-for="Input.PhoneNumber" class="form-label"></label>
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
-            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
-        </form>
-    </div>
-</div>
+            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary"> Save </button >
+        </div >
+        <div class="col-md-4">
+            <img style="width:350px;height:350px" src="@Model.Input.ProfilePictureUrl" alt="">
+            <input type="file" accept=".png,.jpg,.jpeg,.gif,.tif" asp-for="Input.ProfilePictureUrl" class="form-control"/>
+            <span asp-validation-for="Input.ProfilePictureUrl" class="text-danger"></span>
+        </div>
+
+    </div >
+</form >
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial"/>

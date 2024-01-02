@@ -19,4 +19,15 @@
       <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\images\users\5ca47552-58e5-417d-bf4c-b1d9e4a44f2dchess.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\users\5cf00e28-f9a8-4663-8eed-8187363d55c9chess.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\users\72bdaaa5-2cc5-4ea7-b0ef-0d3f2a690030chess.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\users\7ef4b3e3-f020-4272-af24-27d8fdf45dc3chess.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\users\bdb846b4-398c-4fe3-a359-4a456af38149803094.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\users\cbf8b0b0-f58e-40dd-b936-a7e2dfc26983chess.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\users\d92a4701-d647-4375-95c8-3dfe99c272aachess.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\users\efe26f51-d832-42e0-aefb-4d3213818a38803094.jpg" />
+    </ItemGroup>
+
 </Project>

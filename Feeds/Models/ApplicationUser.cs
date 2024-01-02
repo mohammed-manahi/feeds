@@ -9,6 +9,5 @@ public class ApplicationUser : IdentityUser
     public string FirstName { get; set; }
     public string LastName { get; set; }
     
-    [NotMapped]
-    public object[]? ProfilePicture { get; set; }
+    public string? ProfilePictureUrl { get; set; }
 }

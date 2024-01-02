@@ -111,7 +111,6 @@ namespace Feeds.Areas.Identity.Pages.Account
             [Display(Name = "Last Name")]
             public string LastName { get; set; }
             
-            
         }
 
 
