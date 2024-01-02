@@ -1,11 +1,14 @@
+using Feeds.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Feeds.Data;
 
-public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
+    // Change the Identity db context to application user instead of identity user
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
