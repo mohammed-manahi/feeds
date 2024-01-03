@@ -28,6 +28,17 @@
       <_ContentIncludedByDefault Remove="wwwroot\images\users\cbf8b0b0-f58e-40dd-b936-a7e2dfc26983chess.jpg" />
       <_ContentIncludedByDefault Remove="wwwroot\images\users\d92a4701-d647-4375-95c8-3dfe99c272aachess.jpg" />
       <_ContentIncludedByDefault Remove="wwwroot\images\users\efe26f51-d832-42e0-aefb-4d3213818a38803094.jpg" />
+      <_ContentIncludedByDefault Remove="Areas\Admin\Views\Dashboard\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Admin\Views\_ViewImports.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Admin\Views\_ViewStart.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Areas\Administration\Views\Dashboard\Index.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Areas\Administration\Views\Shared\" />
     </ItemGroup>
 
 </Project>

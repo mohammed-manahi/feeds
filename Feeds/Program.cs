@@ -63,8 +63,15 @@ app.UseAuthentication();
 app.MapRazorPages();
 app.UseAuthorization();
 
+// Register admin area routes
+app.MapControllerRoute(
+    name: "Administration",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+    
 
 app.Run();
