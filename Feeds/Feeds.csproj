@@ -34,7 +34,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <AdditionalFiles Include="Areas\Administration\Views\Dashboard\Index.cshtml" />
+      <AdditionalFiles Include="Areas\Administration\Views\RoleManager\Index.cshtml" />
     </ItemGroup>
 
     <ItemGroup>

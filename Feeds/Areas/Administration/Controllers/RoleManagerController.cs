@@ -1,3 +1,4 @@
+using Feeds.Models;
 using Feeds.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -8,12 +9,14 @@ namespace Feeds.Areas.Administration.Controllers;
 
 [Area("Administration")]
 [Authorize(Roles = nameof(ApplicationUserRoles.Admin))]
-public class DashboardController : Controller
+public class RoleManagerController : Controller
 {
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
 
-    public DashboardController(RoleManager<IdentityRole> roleManager)
+    public RoleManagerController(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
     {
+        _userManager = userManager;
         _roleManager = roleManager;
     }
 

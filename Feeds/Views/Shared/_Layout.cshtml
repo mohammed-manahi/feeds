@@ -28,9 +28,17 @@
                     </li>
                     @if (User.IsInRole(nameof(ApplicationUserRoles.Admin)))
                     {
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Administration" asp-controller="Dashboard" asp-action="Index">User Management</a>
-                        </li>
+                        <div class="dropdown">
+                            <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                Administration
+                            </a>
+
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                <li><a class="dropdown-item" asp-area="Administration" asp-controller="RoleManager" asp-action="Index">Role Management</a></li>
+                                 <li><a class="dropdown-item" asp-area="Administration" asp-controller="UserRolesManager" asp-action="Index">User Role Management</a></li>
+                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            </ul>
+                        </div>
                     }
                 </ul>
             </div>
