@@ -1,3 +1,5 @@
+@using Feeds.Utilities
+@model List<UserRolesViewModel>
 @{
     ViewData["Title"] = "Dashboard";
 }
@@ -8,6 +10,81 @@
             <div class="card-body">
                 <h5 class="card-title fw-semibold mb-4">Welcome to Feeds Dsahbaord</h5>
                 <p class="mb-0">This is a sample page </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+     data-sidebar-position="fixed" data-header-position="fixed">
+    <div class="container-fluid">
+        <div class="card w-auto">
+            <div class="card-body p-4">
+                <h5 class="card-title fw-semibold mb-4">User Management</h5>
+                <div class="table-responsive">
+                    <table class="table text-nowrap mb-0 align-middle">
+                        <thead class="text-dark fs-4">
+                        <tr>
+                            <th class="border-bottom-0">
+                                <h6 class="fw-semibold mb-0">First Name</h6>
+                            </th>
+                            <th class="border-bottom-0">
+                                <h6 class="fw-semibold mb-0">Last Name</h6>
+                            </th>
+                            <th class="border-bottom-0">
+                                <h6 class="fw-semibold mb-0">Email</h6>
+                            </th>
+                            <th class="border-bottom-0">
+                                <h6 class="fw-semibold mb-0">Roles</h6>
+                            </th>
+                            <th class="border-bottom-0">
+                                <h6 class="fw-semibold mb-0">Actions</h6>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td class="border-bottom-0">
+                                    <h6 class="fw-semibold mb-0">@user.FirstName</h6>
+                                </td>
+                                <td class="border-bottom-0">
+                                    <h6 class="fw-semibold mb-0">@user.LastName</h6>
+                                </td>
+                                <td class="border-bottom-0">
+                                    <h6 class="fw-semibold mb-0">@user.Email</h6>
+                                </td>
+                                <td class="border-bottom-0">
+                                    @foreach (var role in user.Roles)
+                                    {
+                                        if (role == nameof(ApplicationUserRoles.Admin))
+                                        {
+                                            <h6 class="badge bg-danger fw-semibold mb-0">@role</h6>
+                                        }
+                                        else if (role == nameof(ApplicationUserRoles.Moderator))
+                                        {
+                                            <h6 class="badge bg-primary fw-semibold mb-0">@role</h6>
+                                        }
+                                        else if (role == nameof(ApplicationUserRoles.User))
+                                        {
+                                            <h6 class="badge bg-success fw-semibold mb-0">@role</h6>
+                                        }
+                                        else
+                                        {
+                                            <h6 class="badge bg-secondary fw-semibold mb-0">@role</h6>
+                                        }
+                                    }
+                                    @* <h6 class="badge bg-danger fw-semibold mb-0">@string.Join(", ", user.Roles.ToList())</h6> *@
+                                </td>
+                                <td class="border-bottom-0">
+                                    <a class="btn btn-primary" asp-area="Administration" asp-controller="UserRolesManager" asp-action="Manage" asp-route-userId="@user.UserId">Manage Roles</a>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

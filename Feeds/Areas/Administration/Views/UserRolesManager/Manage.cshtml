@@ -25,7 +25,7 @@
         </div>
         <div class="card-footer">
             <input type="submit" value="Update" class="btn btn-primary" style="width:auto" />
-            <a asp-area="Administration" asp-action="Manage" asp-route-id="@ViewBag.userId"
+            <a asp-area="Administration" asp-controller="UserRolesManager" asp-action="Index" asp-route-id="@ViewBag.userId"
                class="btn btn-primary" style="width:auto">Cancel</a>
         </div>
     </div>
