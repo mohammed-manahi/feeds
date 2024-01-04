@@ -16,21 +16,25 @@ public class UserRolesManagerController : Controller
 
     public UserRolesManagerController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
     {
+        // Inject role manager and user manager 
         _roleManager = roleManager;
         _userManager = userManager;
     }
 
     public async Task<IActionResult> Index()
     {
+        // Get all users 
         var users = await _userManager.Users.ToListAsync();
         var userRolesViewModel = new List<UserRolesViewModel>();
         foreach (ApplicationUser user in users)
         {
+            // Get each user details and assigned roles
             var thisViewModel = new UserRolesViewModel();
             thisViewModel.UserId = user.Id;
             thisViewModel.Email = user.Email;
             thisViewModel.FirstName = user.FirstName;
             thisViewModel.LastName = user.LastName;
+            // Invoke GetUserRoles method to get user roles
             thisViewModel.Roles = await GetUserRoles(user);
             userRolesViewModel.Add(thisViewModel);
         }
@@ -40,6 +44,7 @@ public class UserRolesManagerController : Controller
 
     public async Task<IActionResult> Manage(string userId)
     {
+        // Get user id
         ViewBag.userId = userId;
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
@@ -57,6 +62,7 @@ public class UserRolesManagerController : Controller
                 RoleId = role.Id,
                 RoleName = role.Name
             };
+            // Get selected user roles
             if ( _userManager.IsInRoleAsync(user, role.Name).GetAwaiter().GetResult())
             {
                 userRolesViewModel.Selected = true;
@@ -80,15 +86,16 @@ public class UserRolesManagerController : Controller
         {
             return View();
         }
-
+        
         var roles = await _userManager.GetRolesAsync(user);
+        // Remove user roles
         var result = await _userManager.RemoveFromRolesAsync(user, roles);
         if (!result.Succeeded)
         {
             ModelState.AddModelError("", "Cannot remove user existing roles");
             return View(model);
         }
-
+        // Add user roles
         result = await _userManager.AddToRolesAsync(user, model.Where(x => x.Selected).Select(y => y.RoleName));
         if (!result.Succeeded)
         {
