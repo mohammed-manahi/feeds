@@ -1,7 +1,9 @@
 using Feeds.Data;
 using Feeds.Models;
+using Feeds.Services;
 using Feeds.Utilities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,6 +38,10 @@ builder.Services.Configure<IdentityOptions>(options =>
     // User settings
     options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
     options.User.RequireUniqueEmail = false;
+
+    // options.SignIn.RequireConfirmedEmail = true;
+    // options.SignIn.RequireConfirmedAccount = true;
+
 });
 
 // Cookie configuration
@@ -54,9 +60,14 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
+// Configure mail by reading json configuration in appsettings into MailConfigurationUtility class
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddTransient<IMailService, MailService>();
 
 // Add razor pages to application for identity
 builder.Services.AddRazorPages();
