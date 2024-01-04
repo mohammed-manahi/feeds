@@ -5,9 +5,12 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"] - Feeds</title>
+    <link rel="shortcut icon" type="image/png" href="~/images/logos/favicon.png"/>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/Feeds.styles.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/lib/simplebar/dist/simplebar.css"/>
+    <link rel="stylesheet" href="~/css/styles.min.css"/>
 </head>
 <body>
 <header>
@@ -34,8 +37,12 @@
                             </a>
 
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                <li><a class="dropdown-item" asp-area="Administration" asp-controller="RoleManager" asp-action="Index">Role Management</a></li>
-                                 <li><a class="dropdown-item" asp-area="Administration" asp-controller="UserRolesManager" asp-action="Index">User Role Management</a></li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Administration" asp-controller="RoleManager" asp-action="Index">Role Management</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Administration" asp-controller="UserRolesManager" asp-action="Index">User Role Management</a>
+                                </li>
                             </ul>
                         </div>
                     }
@@ -58,6 +65,11 @@
 </footer>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/sidebarmenu.js"></script>
+<script src="~/js/app.min.js"></script>
+<script src="~/lib/apexcharts/dist/apexcharts.min.js"></script>
+<script src="~/lib/simplebar/dist/simplebar.min.js"></script>
+<script src="~/js/dashboard.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>
