@@ -38,8 +38,4 @@
       <AdditionalFiles Include="Areas\Administration\Views\RoleManager\Index.cshtml" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Areas\Administration\Views\Shared\" />
-    </ItemGroup>
-
 </Project>

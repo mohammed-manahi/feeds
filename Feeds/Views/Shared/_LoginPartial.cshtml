@@ -1,4 +1,6 @@
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Feeds.Utilities
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
@@ -6,20 +8,38 @@
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
-        <li class="nav-item" style="align-self: center;">
-            @if (UserManager.GetUserAsync(User).Result.ProfilePictureUrl != null)
-            {
-                <img style="width:40px;height:40px; object-fit:cover; border-radius:30px" src="@UserManager.GetUserAsync(User).Result.ProfilePictureUrl">
-            }
-        </li>
-        <li class="nav-item">
-            <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@UserManager.GetUserAsync(User).Result.FirstName</a>
-        </li>
-
-        <li class="nav-item">
-            <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                <button id="logout" type="submit" class="nav-link btn btn-link text-dark border-0">Logout</button>
-            </form>
+        <li class="nav-item dropdown">
+            <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown"
+               aria-expanded="false">
+                @if (UserManager.GetUserAsync(User).Result.ProfilePictureUrl != null)
+                {
+                    <img style="width:40px;height:40px; object-fit:cover; border-radius:30px" src="@UserManager.GetUserAsync(User).Result.ProfilePictureUrl">
+                }
+                else
+                {
+                    <img src="~/images/profile/user-1.jpg" style="width:40px;height:40px; object-fit:cover; border-radius:30px" alt="" width="35" height="35" class="rounded-circle">
+                }
+                &nbsp;
+                <small>@UserManager.GetUserAsync(User).Result.FirstName</small>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
+                <div class="message-body">
+                    @if (User.IsInRole(nameof(ApplicationUserRoles.Admin)))
+                    {
+                        <a asp-area="Administration" asp-controller="Dashboard" asp-action="Index" class="d-flex align-items-center gap-2 dropdown-item">
+                            <i class="ti ti-user fs-6"></i>
+                            <p class="mb-0 fs-3">Dashboard</p>
+                        </a>
+                    }
+                    <a asp-area="Identity" asp-page="/Account/Manage/Index" class="d-flex align-items-center gap-2 dropdown-item">
+                        <i class="ti ti-user fs-6"></i>
+                        <p class="mb-0 fs-3">My Profile</p>
+                    </a>
+                    <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                        <button id="logout" type="submit" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</button>
+                    </form>
+                </div>
+            </div>
         </li>
     }
     else
