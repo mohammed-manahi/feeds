@@ -38,6 +38,22 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.User.RequireUniqueEmail = false;
 });
 
+// Cookie configuration
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    // Cookie settings
+    options.Cookie.HttpOnly = true;
+    // Set the cookie's expiration time to 15 minutes (logout if user stays idle for this period) 
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+    
+    // Redirect unauthenticated users
+    options.LoginPath = "/Identity/Account/Login";
+    // Redirect unauthorized users
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    // Reset cookie's expiration time when user actively using the application
+    options.SlidingExpiration = true;
+});
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
