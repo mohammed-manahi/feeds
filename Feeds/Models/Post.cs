@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Feeds.Validations;
 using Microsoft.EntityFrameworkCore;
 using Slugify;
 

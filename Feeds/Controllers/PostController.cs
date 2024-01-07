@@ -49,7 +49,6 @@ public class PostController : Controller
         IFormFile file = Request.Form.Files.FirstOrDefault();
         var targetPath = @"images/posts";
         FileManagementUtility fileManagementUtility = new FileManagementUtility(_webHostEnvironment);
-
         if (ModelState.IsValid)
         {
             post.Image = fileManagementUtility.UploadFile(file, targetPath);

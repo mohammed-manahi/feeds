@@ -17,7 +17,7 @@
                                 <span asp-validation-for="Title" class="text-danger"></span>
                             </div>
                             <div class="col-md-4">
-                                <input type="file" accept=".png,.jpg,.jpeg,.gif,.tif" asp-for="Image" class="form-control"/>
+                                <input type="file" accept=".png,.jpg,.jpeg,.gif,.tif" asp-for="@Model.Image" class="form-control"/>
                                 <span asp-validation-for="Image" class="text-danger"></span>
                             </div>
                             <div class="mb-3">
