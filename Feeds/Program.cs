@@ -1,5 +1,6 @@
 using Feeds.Data;
 using Feeds.Models;
+using Feeds.Repositories;
 using Feeds.Services;
 using Feeds.Utilities;
 using Microsoft.AspNetCore.Identity;
@@ -72,6 +73,9 @@ builder.Services.AddTransient<IMailService, MailService>();
 // Add razor pages to application for identity
 builder.Services.AddRazorPages();
 
+// Register unit of work in the DI container
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+
 var app = builder.Build();
 
 // Seed user roles to database
@@ -120,7 +124,5 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
-    
 
 app.Run();

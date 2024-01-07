@@ -1,0 +1,44 @@
+﻿@model Post
+@{
+    ViewData["Title"] = "Edit Post";
+}
+<div class="container-fluid">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title fw-semibold mb-4">Edit post</h5>
+                <div class="card">
+                    <div class="card-body">
+                        <form method="post">
+                            <div asp-validation-summary="All"></div>
+                            <input asp-for="CreatedOn" hidden/>
+                            <input asp-for="UpdatedOn" hidden/>
+                            <input asp-for="Slug" hidden/>
+                            <div class="mb-3">
+                                <label asp-for="Title" class="form-label"></label>
+                                <input asp-for="Title" type="text" class="form-control">
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="Image" class="form-label"></label>
+                                <input asp-for="Image" type="text" class="form-control">
+                                <span asp-validation-for="Image" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="Body" class="form-label"></label>
+                                <textarea asp-for="Body" type="" class="form-control"> </textarea>
+                                <span asp-validation-for="Body" class="text-danger"></span>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial"/>
+}

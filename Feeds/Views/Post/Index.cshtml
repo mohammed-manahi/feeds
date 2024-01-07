@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Post>
+@{
+    ViewData["Title"] = "Posts";
+}
+<div class="container-fluid">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    @foreach (var post in Model)
+                    {
+                        <div class="col-md-4">
+                            <div class="card">
+                                <img src="~/images/products/s4.jpg" class="card-img-top" alt="...">
+                                <div class="card-body">
+                                    <h5 class="card-title">@post.Title</h5>
+                                    <p class="card-text">
+                                        @post.Body
+                                    </p>
+                                    <p>
+                                        <small>@post.CreatedOn</small>
+                                        <small>@post.UpdatedOn</small>
+                                        <small>@post.Slug</small>
+                                    </p>
+                                    <a asp-controller="Post" asp-action="Edit" asp-route-id="@post.Id" class="btn btn-warning">Edit</a>
+                                    <a asp-controller="Post" asp-action="Get" asp-route-id="@post.Id" class="btn btn-secondary">View</a>
+                                    <form asp-controller="Post" asp-action="Delete" asp-route-id="@post.Id" method="post" onclick="return confirm('Are you sure you want to delete this post?')">
+                                        <input type="hidden" asp-for="@post.Id"/>
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
