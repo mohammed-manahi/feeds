@@ -155,7 +155,7 @@ namespace Feeds.Areas.Identity.Pages.Account.Manage
             // When an update process occurs the delete should be only when there is new file upload in the form
             if (!string.IsNullOrEmpty(user.ProfilePictureUrl) && Request.Form.Files.FirstOrDefault() != null)
             {
-                fileManagementUtility.RemoveFile(file, user.ProfilePictureUrl);
+                fileManagementUtility.RemoveFile(user.ProfilePictureUrl);
             }
             var targetPath = @"images/users";
             Input.ProfilePictureUrl = fileManagementUtility.UploadFile(file, targetPath);

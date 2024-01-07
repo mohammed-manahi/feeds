@@ -11,7 +11,10 @@
                     {
                         <div class="col-md-4">
                             <div class="card">
-                                <img src="~/images/products/s4.jpg" class="card-img-top" alt="...">
+                                @if (post.Image != null)
+                                {
+                                    <img style="width:350px;height:350px" src="@post.Image" alt="">
+                                }
                                 <div class="card-body">
                                     <h5 class="card-title">@post.Title</h5>
                                     <p class="card-text">

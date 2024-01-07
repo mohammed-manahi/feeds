@@ -25,9 +25,8 @@ public class Post : BaseModel
         get => _slug;
         set => _slug = Slugify(Title);
     }
-
-    [Required]
-    public string Image { get; set; }
+    
+    public string? Image { get; set; }
 
     public string Slugify(string title)
     {

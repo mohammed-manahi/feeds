@@ -9,16 +9,15 @@
                 <h5 class="card-title fw-semibold mb-4">Add new post</h5>
                 <div class="card">
                     <div class="card-body">
-                        <form method="post">
+                        <form method="post" enctype="multipart/form-data">
                             <input asp-for="Slug" hidden/>
                             <div class="mb-3">
                                 <label asp-for="Title" class="form-label"></label>
                                 <input asp-for="Title" type="text" class="form-control">
                                 <span asp-validation-for="Title" class="text-danger"></span>
                             </div>
-                            <div class="mb-3">
-                                <label asp-for="Image" class="form-label"></label>
-                                <input asp-for="Image" type="text" class="form-control">
+                            <div class="col-md-4">
+                                <input type="file" accept=".png,.jpg,.jpeg,.gif,.tif" asp-for="Image" class="form-control"/>
                                 <span asp-validation-for="Image" class="text-danger"></span>
                             </div>
                             <div class="mb-3">

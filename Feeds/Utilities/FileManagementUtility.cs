@@ -37,7 +37,7 @@ public class FileManagementUtility
         return null;
     }
 
-    public void RemoveFile(IFormFile file, object modelFileProperty)
+    public void RemoveFile(object modelFileProperty)
     {
         string wwwRootPath = _webHostEnvironment.WebRootPath;
         if (!string.IsNullOrEmpty(modelFileProperty.ToString()))
