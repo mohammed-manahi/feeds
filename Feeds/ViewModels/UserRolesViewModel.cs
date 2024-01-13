@@ -1,4 +1,4 @@
-namespace Feeds.Models;
+namespace Feeds.ViewModels;
 
 public class UserRolesViewModel
 {
