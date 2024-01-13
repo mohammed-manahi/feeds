@@ -25,12 +25,14 @@
                                         <small>@post.UpdatedOn</small>
                                         <small>@post.Slug</small>
                                     </p>
-                                    <a asp-controller="Post" asp-action="Edit" asp-route-id="@post.Id" class="btn btn-warning">Edit</a>
-                                    <a asp-controller="Post" asp-action="Get" asp-route-id="@post.Id" class="btn btn-secondary">View</a>
+                                    <span>
+                                    <a asp-controller="Post" asp-action="Edit" asp-route-slug="@post.Slug" asp-route-year="@post.CreatedOn.Year" asp-route-month="@post.CreatedOn.Month" asp-route-day="@post.CreatedOn.Day" class="btn btn-warning">Edit</a>
+                                    <a asp-controller="Post" asp-action="Get" asp-route-slug="@post.Slug" asp-route-year="@post.CreatedOn.Year" asp-route-month="@post.CreatedOn.Month" asp-route-day="@post.CreatedOn.Day" class="btn btn-secondary">View</a>
                                     <form asp-controller="Post" asp-action="Delete" asp-route-id="@post.Id" method="post" onclick="return confirm('Are you sure you want to delete this post?')">
                                         <input type="hidden" asp-for="@post.Id"/>
                                         <button type="submit" class="btn btn-danger">Delete</button>
                                     </form>
+                                    </span>
                                 </div>
                             </div>
                         </div>

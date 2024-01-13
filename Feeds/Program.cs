@@ -42,7 +42,6 @@ builder.Services.Configure<IdentityOptions>(options =>
 
     // options.SignIn.RequireConfirmedEmail = true;
     // options.SignIn.RequireConfirmedAccount = true;
-
 });
 
 // Cookie configuration
@@ -52,7 +51,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.HttpOnly = true;
     // Set the cookie's expiration time to 15 minutes (logout if user stays idle for this period) 
     options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
-    
+
     // Redirect unauthenticated users
     options.LoginPath = "/Identity/Account/Login";
     // Redirect unauthorized users
@@ -63,7 +62,6 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 // Configure mail by reading json configuration in appsettings into MailConfigurationUtility class
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
-
 
 
 // Add services to the container.
@@ -87,7 +85,7 @@ using (var scope = app.Services.CreateScope())
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        
+
         // Invoke user roles seed method
         await ContextSeed.SeedUserRoles(userManager, roleManager);
         // Invoke super user seed method
@@ -118,11 +116,13 @@ app.UseAuthorization();
 
 // Register admin area routes
 app.MapControllerRoute(
-    name: "Administration",
+    name: "administration",
     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 
 app.Run();

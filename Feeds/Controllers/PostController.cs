@@ -20,37 +20,49 @@ public class PostController : Controller
         _unitOfWork = unitOfWork;
     }
 
+    [Route("posts/")]
     public IActionResult Index()
     {
         var postList = _unitOfWork.PostRepository.GetAll();
         return View(postList.OrderBy(p => p.Title));
     }
 
-    public IActionResult Get(int? id)
+    [Route("posts/{year:int}/{month:int}/{day:int}/{slug}")]
+    public IActionResult Get(int? year, int? month, int? day, string? slug)
     {
-        if (id == null)
+        if (slug == null)
         {
             return NotFound();
         }
 
-        Post post = _unitOfWork.PostRepository.Get(p => p.Id == id);
+        Post post = _unitOfWork.PostRepository.Get(p =>
+            p.Slug == slug && p.CreatedOn.Year == year && p.CreatedOn.Month == month && p.CreatedOn.Day == day);
         return View(post);
     }
 
     [HttpGet]
+    [Route("posts/create")]
     public IActionResult Create()
     {
         return View();
     }
 
     [HttpPost]
+    [Route("posts/create")]
     public IActionResult Create(Post post)
     {
         IFormFile file = Request.Form.Files.FirstOrDefault();
         var targetPath = @"images/posts";
         FileManagementUtility fileManagementUtility = new FileManagementUtility(_webHostEnvironment);
+       
         if (ModelState.IsValid)
         {
+            if (_dbContext.Posts.Any(p =>
+                    p.Slug == post.Slug))
+            {
+                ModelState.AddModelError("", "Post title can not be duplicate");
+                return View();
+            }
             post.Image = fileManagementUtility.UploadFile(file, targetPath);
             _unitOfWork.PostRepository.Add(post);
             _unitOfWork.Save();
@@ -60,15 +72,17 @@ public class PostController : Controller
         return View();
     }
 
-    [HttpGet]
-    public IActionResult Edit(int? id)
+    [Route("posts/{year:int}/{month:int}/{day:int}/{slug}/edit")]
+    public IActionResult Edit(int? year, int? month, int? day, string? slug)
     {
-        if (id == null) return NotFound();
-        Post post = _unitOfWork.PostRepository.Get(p => p.Id == id);
+        if (slug == null) return NotFound();
+        Post post = _unitOfWork.PostRepository.Get(p =>
+            p.Slug == slug && p.CreatedOn.Year == year && p.CreatedOn.Month == month && p.CreatedOn.Day == day);
         return View(post);
     }
 
     [HttpPost]
+    [Route("posts/{year:int}/{month:int}/{day:int}/{slug}/edit")]
     public IActionResult Edit(Post post)
     {
         if (ModelState.IsValid)
@@ -81,12 +95,16 @@ public class PostController : Controller
                 var targetPath = @"images/posts";
                 post.Image = fileManagementUtility.UploadFile(file, targetPath);
             }
+
             post.Image = post.Image;
             _unitOfWork.PostRepository.Update(post);
             _unitOfWork.Save();
-            return RedirectToAction(nameof(Get), new { id = post.Id });
+            return RedirectToAction(nameof(Get),
+                new
+                {
+                    slug = post.Slug, year = post.CreatedOn.Year, month = post.CreatedOn.Month, day = post.CreatedOn.Day
+                });
         }
-
         return View();
     }
 
