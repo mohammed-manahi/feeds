@@ -22,7 +22,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
     public override int SaveChanges()
     {
-        foreach (var entityEntry in ChangeTracker.Entries<Post>())
+        foreach (var entityEntry in ChangeTracker.Entries<BaseModel>())
         {
             if (entityEntry.State == EntityState.Added)
             {
