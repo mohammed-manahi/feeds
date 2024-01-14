@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Feeds.Validations;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.EntityFrameworkCore;
 using Slugify;
 
@@ -28,6 +30,13 @@ public class Post : BaseModel
     }
     
     public string? Image { get; set; }
+    
+
+    public string? ApplicationUserId { get; set; }
+    
+    [ValidateNever]
+    [ForeignKey(nameof(ApplicationUserId))]
+    public ApplicationUser ApplicationUser { get; set; }
 
     public string Slugify(string title)
     {
