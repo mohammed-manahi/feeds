@@ -26,7 +26,7 @@
                             <p>By: @Model.ApplicationUser.FirstName</p>
                             <div style="display: flex; justify-content: space-between;">
                                 <a asp-controller="Post" asp-action="Index" class="btn btn-primary">All Posts</a>
-                                  @if (currentUser == Model.ApplicationUserId)
+                                @if (currentUser == Model.ApplicationUserId)
                                 {
                                     <a asp-controller="Post" asp-action="Edit" asp-route-slug="@Model.Slug" asp-route-year="@Model.CreatedOn.Year" asp-route-month="@Model.CreatedOn.Month" asp-route-day="@Model.CreatedOn.Day" class="btn btn-warning">Edit</a>
                                     <form asp-controller="Post" asp-action="Delete" asp-route-id="@Model.Id" method="post" onclick="return confirm('Are you sure you want to delete this post?')">
@@ -39,6 +39,49 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title fw-semibold mb-4">Comments</h5>
+            <form asp-controller="Post" asp-action="CreateComment" method="post">
+                <input asp-for="@Model.Id" name="postId" hidden/>
+                <input asp-for="ApplicationUserId" hidden/>
+                <label for="commentText">Add Comment:</label>
+                <div style="display: flex;">
+                    <input type="text" name="body" required class="form-control"/>
+                    <input type="submit" class="btn btn-primary" value="Add"/>
+                </div>
+            </form>
+            @if (Model.Comments != null)
+            {
+                <ul class="timeline-widget mb-0 position-relative mb-n5 py-3">
+                    @foreach (var comment in Model.Comments)
+                    {
+                        <li class="timeline-item d-flex position-relative overflow-hidden">
+                            <div class="timeline-time text-dark flex-shrink-0 text-end">@comment.CreatedOn</div>
+                            <div class="timeline-badge-wrap d-flex flex-column align-items-center">
+                                <span class="timeline-badge border-2 border border-primary flex-shrink-0 my-8"></span>
+                                <span class="timeline-badge-border d-block flex-shrink-0"></span>
+                            </div>
+                            <div class="timeline-desc fs-3 text-dark mt-n1">@comment.ApplicationUser.FirstName: @comment.Body</div>
+                            @if (currentUser == comment.ApplicationUserId)
+                            {
+                                <form asp-controller="Post" asp-action="DeleteComment" asp-route-id="@comment.Id" method="post" onclick="return confirm('Are you sure you want to delete this comment?')">
+                                    <input type="hidden" asp-for="@Model.Id" name="postId"/>
+                                    <input type="hidden" asp-for="@comment.Id" name="id"/>
+                                    <input type="hidden" asp-for="@comment.ApplicationUserId" name="applicationUserId"/>
+                                    <div style="text-align: right;">
+                                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                    </div>
+                                </form>
+                            }
+                        </li>
+                    }
+                </ul>
+            }
         </div>
     </div>
 </div>

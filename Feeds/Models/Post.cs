@@ -37,6 +37,8 @@ public class Post : BaseModel
     [ValidateNever]
     [ForeignKey(nameof(ApplicationUserId))]
     public ApplicationUser ApplicationUser { get; set; }
+    
+    public ICollection<Comment>? Comments { get; set; }
 
     public string Slugify(string title)
     {

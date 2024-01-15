@@ -8,10 +8,13 @@ public class UnitOfWork : IUnitOfWork
 
     public IPostRepository PostRepository { get; set; }
     
+    public ICommentRepository CommentRepository { get; set; }
+    
     public UnitOfWork(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
         PostRepository = new PostRepository(dbContext);
+        CommentRepository = new CommentRepository(dbContext);
     }
     
     public void Save()

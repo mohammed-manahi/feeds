@@ -6,6 +6,7 @@ using Feeds.Repositories;
 using Feeds.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Feeds.Controllers;
 
@@ -29,11 +30,11 @@ public class PostController : Controller
     [Route("posts/")]
     public IActionResult Index()
     {
-        var postList = _unitOfWork.PostRepository.GetAll("ApplicationUser");
+        var postList = _unitOfWork.PostRepository.GetAll("ApplicationUser,Comments");
         return View(postList.OrderBy(p => p.Title));
     }
 
-    [AllowAnonymous]
+    [Authorize]
     [Route("posts/{year:int}/{month:int}/{day:int}/{slug}")]
     public IActionResult Get(int? year, int? month, int? day, string? slug)
     {
@@ -42,8 +43,10 @@ public class PostController : Controller
             return NotFound();
         }
 
-        Post post = _unitOfWork.PostRepository.Get(p =>
-            p.Slug == slug && p.CreatedOn.Year == year && p.CreatedOn.Month == month && p.CreatedOn.Day == day, "ApplicationUser");
+        // Load comments and their users then post and its user  
+        Post post = _dbContext.Posts.Include(p => p.Comments)
+            .ThenInclude(p => p.ApplicationUser).Include(p => p.ApplicationUser).FirstOrDefault(p =>
+                p.Slug == slug && p.CreatedOn.Year == year && p.CreatedOn.Month == month && p.CreatedOn.Day == day);
         return View(post);
     }
 
@@ -63,7 +66,7 @@ public class PostController : Controller
         IFormFile file = Request.Form.Files.FirstOrDefault();
         var targetPath = @"images/posts";
         FileManagementUtility fileManagementUtility = new FileManagementUtility(_webHostEnvironment);
-        
+
         var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (ModelState.IsValid)
         {
@@ -74,12 +77,14 @@ public class PostController : Controller
                 ModelState.AddModelError("", "Post title can not be duplicate");
                 return View();
             }
+
             post.ApplicationUserId = userId;
             post.Image = fileManagementUtility.UploadFile(file, targetPath);
             _unitOfWork.PostRepository.Add(post);
             _unitOfWork.Save();
             return RedirectToAction(nameof(Index));
         }
+
         return View();
     }
 
@@ -88,7 +93,7 @@ public class PostController : Controller
     public IActionResult Edit(int? year, int? month, int? day, string? slug)
     {
         var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-        
+
         if (slug == null) return NotFound();
         Post post = _unitOfWork.PostRepository.Get(p =>
             p.Slug == slug && p.CreatedOn.Year == year && p.CreatedOn.Month == month && p.CreatedOn.Day == day);
@@ -96,6 +101,7 @@ public class PostController : Controller
         {
             return View(post);
         }
+
         return RedirectToAction(nameof(Index));
     }
 
@@ -140,11 +146,77 @@ public class PostController : Controller
 
         Post post = _unitOfWork.PostRepository.Get(p => p.Id == id);
         var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        FileManagementUtility fileManagementUtility = new FileManagementUtility(_webHostEnvironment);
         if (post.ApplicationUserId == userId)
         {
+            if (post.Image != null)
+            {
+                fileManagementUtility.RemoveFile(post.Image);
+            }
+
             _unitOfWork.PostRepository.Remove(post);
             _unitOfWork.Save();
         }
+
         return RedirectToAction(nameof(Index));
+    }
+
+    [Authorize]
+    [HttpPost]
+    public IActionResult CreateComment(int postId, Comment comment)
+    {
+        var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var post = _unitOfWork.PostRepository.Get(p => p.Id == postId, "ApplicationUser,Comments");
+        if (postId == null)
+        {
+            return NotFound();
+        }
+
+        if (ModelState.IsValid)
+        {
+            comment.ApplicationUserId = userId;
+            comment.PostId = postId;
+            _unitOfWork.CommentRepository.Add(comment);
+            _unitOfWork.Save();
+            return RedirectToAction(nameof(Get),
+                new
+                {
+                    slug = post.Slug, year = post.CreatedOn.Year,
+                    month = post.CreatedOn.Month, day = post.CreatedOn.Day
+                });
+        }
+
+        return RedirectToAction(nameof(Get),
+            new
+            {
+                slug = post.Slug, year = post.CreatedOn.Year,
+                month = post.CreatedOn.Month, day = post.CreatedOn.Day
+            });
+    }
+
+    [Authorize]
+    [HttpPost]
+    public IActionResult DeleteComment(int postId, int id, string applicationUserId)
+    {
+        if (postId == null && id == null)
+        {
+            return NotFound();
+        }
+
+        Post post = _unitOfWork.PostRepository.Get(p => p.Id == postId);
+        Comment comment = _dbContext.Comments.Include(c => c.Post).ThenInclude(c => c.ApplicationUser).FirstOrDefault();
+        var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (applicationUserId == userId)
+        {
+            _unitOfWork.CommentRepository.Remove(comment);
+            _unitOfWork.Save();
+        }
+
+        return RedirectToAction(nameof(Get),
+            new
+            {
+                slug = post.Slug, year = post.CreatedOn.Year,
+                month = post.CreatedOn.Month, day = post.CreatedOn.Day
+            });
     }
 }
