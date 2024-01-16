@@ -4,6 +4,7 @@ using Feeds.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Feeds.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240116051336_AddTagModelAndAssociateItWithPostModel")]
+    partial class AddTagModelAndAssociateItWithPostModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -152,6 +155,9 @@ namespace Feeds.Migrations
                     b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("PostTagId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -181,12 +187,17 @@ namespace Feeds.Migrations
                     b.Property<int>("PostId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("PostTagId")
+                        .HasColumnType("int");
+
                     b.Property<int>("TagId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PostId");
+
+                    b.HasIndex("PostTagId");
 
                     b.HasIndex("TagId");
 
@@ -200,6 +211,9 @@ namespace Feeds.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PostTagId")
+                        .HasColumnType("int");
 
                     b.Property<string>("TagName")
                         .IsRequired()
@@ -372,13 +386,21 @@ namespace Feeds.Migrations
             modelBuilder.Entity("Feeds.Models.PostTag", b =>
                 {
                     b.HasOne("Feeds.Models.Post", "Post")
-                        .WithMany("PostTags")
+                        .WithMany()
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Feeds.Models.Tag", "Tag")
+                    b.HasOne("Feeds.Models.Post", null)
                         .WithMany("PostTags")
+                        .HasForeignKey("PostTagId");
+
+                    b.HasOne("Feeds.Models.Tag", null)
+                        .WithMany("PostTags")
+                        .HasForeignKey("PostTagId");
+
+                    b.HasOne("Feeds.Models.Tag", "Tag")
+                        .WithMany()
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

@@ -39,6 +39,10 @@ public class Post : BaseModel
     public ApplicationUser ApplicationUser { get; set; }
     
     public ICollection<Comment>? Comments { get; set; }
+    
+    
+    [ValidateNever]
+    public ICollection<PostTag>? PostTags { get; set; }
 
     public string Slugify(string title)
     {

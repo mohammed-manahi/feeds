@@ -29,6 +29,11 @@
                                 <textarea asp-for="Body" type="" class="form-control"> </textarea>
                                 <span asp-validation-for="Body" class="text-danger"></span>
                             </div>
+                            <div class="mb-3">
+                                <label asp-for="PostTags" class="form-label"></label>
+                                <input asp-for="PostTags" name="postTags" type="text" class="form-control" placeholder="Add tags and split them with comma">
+                                <span asp-validation-for="PostTags" class="text-danger"></span>
+                            </div>
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </form>
                     </div>

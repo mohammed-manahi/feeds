@@ -21,6 +21,13 @@
                             <p class="card-text">
                                 @Model.Body
                             </p>
+                            @if (Model.PostTags != null)
+                            {
+                                @foreach (var tag in Model.PostTags)
+                                {
+                                    <a asp-controller="Post" asp-action="IndexByTag" asp-route-tagName="@tag.Tag.TagName"><span class="badge bg-success rounded-3 fw-semibold">@tag.Tag.TagName</span></a>
+                                }
+                            }
                             <p>Created on: @Model.CreatedOn</p>
                             <p>Last Update: @Model.UpdatedOn</p>
                             <p>By: @Model.ApplicationUser.FirstName</p>

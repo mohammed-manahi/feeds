@@ -7,6 +7,7 @@ using Feeds.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Feeds.Controllers;
 
@@ -31,7 +32,23 @@ public class PostController : Controller
     public IActionResult Index()
     {
         var postList = _unitOfWork.PostRepository.GetAll("ApplicationUser,Comments");
+
         return View(postList.OrderBy(p => p.Title));
+    }
+
+    [AllowAnonymous]
+    [Route("posts/tag/{tagName}")]
+    public IActionResult IndexByTag(string? tagName)
+    {
+        var postList = _dbContext.Posts
+            .Include(p => p.ApplicationUser)
+            .Include(p => p.PostTags)
+            .ThenInclude(p => p.Tag)
+            .Where(p => p.PostTags.Any(pt => pt.Tag.TagName == tagName))
+            .OrderBy(p => p.Title)
+            .ToList();
+
+        return View(postList);
     }
 
     [Authorize]
@@ -44,8 +61,13 @@ public class PostController : Controller
         }
 
         // Load comments and their users then post and its user  
-        Post post = _dbContext.Posts.Include(p => p.Comments)
-            .ThenInclude(p => p.ApplicationUser).Include(p => p.ApplicationUser).FirstOrDefault(p =>
+        Post post = _dbContext.Posts
+            .Include(p => p.Comments)
+            .ThenInclude(p => p.ApplicationUser)
+            .Include(p => p.ApplicationUser)
+            .Include(p => p.PostTags)
+            .ThenInclude(p => p.Tag)
+            .FirstOrDefault(p =>
                 p.Slug == slug && p.CreatedOn.Year == year && p.CreatedOn.Month == month && p.CreatedOn.Day == day);
         return View(post);
     }
@@ -61,7 +83,7 @@ public class PostController : Controller
     [Authorize]
     [HttpPost]
     [Route("posts/create")]
-    public IActionResult Create(Post post)
+    public IActionResult Create(Post post, string? postTags)
     {
         IFormFile file = Request.Form.Files.FirstOrDefault();
         var targetPath = @"images/posts";
@@ -76,6 +98,29 @@ public class PostController : Controller
             {
                 ModelState.AddModelError("", "Post title can not be duplicate");
                 return View();
+            }
+
+            if (!string.IsNullOrEmpty(postTags))
+            {
+                var tagNames = postTags.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var tagName in tagNames)
+                {
+                    var existingTag = _dbContext.Tags.FirstOrDefault(t => t.TagName == tagName);
+
+                    if (existingTag == null)
+                    {
+                        var newTag = new Tag { TagName = tagName.ToLower() };
+                        _dbContext.Tags.Add(newTag);
+                        _dbContext.SaveChanges();
+
+                        post.PostTags.Add(new PostTag { TagId = newTag.Id });
+                    }
+                    else
+                    {
+                        post.PostTags.Add(new PostTag { TagId = existingTag.Id });
+                    }
+                }
             }
 
             post.ApplicationUserId = userId;
@@ -154,6 +199,15 @@ public class PostController : Controller
                 fileManagementUtility.RemoveFile(post.Image);
             }
 
+            if (post.Comments != null)
+            {
+                foreach (var comment in post.Comments)
+                {
+                    _unitOfWork.CommentRepository.Remove(comment);
+                    _unitOfWork.Save();
+                }
+            }
+
             _unitOfWork.PostRepository.Remove(post);
             _unitOfWork.Save();
         }
@@ -193,7 +247,7 @@ public class PostController : Controller
                 month = post.CreatedOn.Month, day = post.CreatedOn.Day
             });
     }
-
+    
     [Authorize]
     [HttpPost]
     public IActionResult DeleteComment(int postId, int id, string applicationUserId)
@@ -202,7 +256,6 @@ public class PostController : Controller
         {
             return NotFound();
         }
-
         Post post = _unitOfWork.PostRepository.Get(p => p.Id == postId);
         Comment comment = _dbContext.Comments.Include(c => c.Post).ThenInclude(c => c.ApplicationUser).FirstOrDefault();
         var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -211,7 +264,6 @@ public class PostController : Controller
             _unitOfWork.CommentRepository.Remove(comment);
             _unitOfWork.Save();
         }
-
         return RedirectToAction(nameof(Get),
             new
             {

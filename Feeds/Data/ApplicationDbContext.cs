@@ -17,6 +17,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Comment> Comments { get; set; }
     
     public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+    
+    public DbSet<PostTag> PostTags { get; set; }
+    
+    public DbSet<Tag>Tags { get; set; }
+    
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
